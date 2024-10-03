@@ -1,4 +1,5 @@
 title: Mauricio Rostagno
 description: Experienced Data Analyst with a strong foundation in statistical modeling, and data-driven decision-making. Passionate about  data science techniques for business outcomes. Currently expanding expertise in machine learning and predictive models.
 #show_downloads: true
-theme: jekyll-theme-time-machine
+theme: agency-jekyll-theme
+# jekyll-theme-time-machine
