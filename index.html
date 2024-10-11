@@ -154,7 +154,7 @@
 	<!-- About us Section Ends -->
 	
 	<!-- Services Section Starts -->
-	<section class="services" id="services">
+      <section class="services" id="services">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12">
@@ -1251,7 +1251,7 @@
 					<!-- Section title start -->
 					<div class="section-title">
 						<h2>Get in touch</h2>
-						<p>Feel free to drop me a line - Contact us</p>
+						<p>Feel free to drop me a line</p>
 					</div>
 					<!-- Section title end -->
 				</div>
@@ -1261,29 +1261,30 @@
 				<div class="col-md-8 offset-md-2">
 					<!-- Contact Form start -->
 					<div class="contact-form">
-						<form id="contactForm" action="#" method="post">
-							<div class="row">
-								<div class="form-group col-md-6 col-sm-6">
-									<input type="text" class="form-control" placeholder="Your Name">
-								</div>
-								
-								<div class="form-group col-md-6 col-sm-6">
-									<input type="email" class="form-control" placeholder="Your Email Address">
-								</div>
-								
-								<div class="form-group col-md-12 col-sm-12">
-									<input type="text" class="form-control" placeholder="Subject">
-								</div>
-								
-								<div class="form-group col-md-12 col-sm-12">
-									<textarea rows="4" class="form-control" placeholder="How can i help you?"></textarea>
-								</div>
-								
-								<div class="col-md-12 col-sm-12 text-center">
-									<button type="submit" class="btn-contact">Contact Now</button>
-								</div>
-							</div>
+						<form id="contactForm" action="send-email.php" method="post">
+						    <div class="row">
+						        <div class="form-group col-md-6 col-sm-6">
+						            <input type="text" class="form-control" name="name" placeholder="Your Name" required>
+						        </div>
+						        
+						        <div class="form-group col-md-6 col-sm-6">
+						            <input type="email" class="form-control" name="email" placeholder="Your Email Address" required>
+						        </div>
+						        
+						        <div class="form-group col-md-12 col-sm-12">
+						            <input type="text" class="form-control" name="subject" placeholder="Subject" required>
+						        </div>
+						        
+						        <div class="form-group col-md-12 col-sm-12">
+						            <textarea rows="4" class="form-control" name="message" placeholder="How can I help you?" required></textarea>
+						        </div>
+						        
+						        <div class="col-md-12 col-sm-12 text-center">
+						            <button type="submit" class="btn-contact">Contact Now</button>
+						        </div>
+						    </div>
 						</form>
+
 					</div>
 					<!-- Contact Form end -->
 				</div>
