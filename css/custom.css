@@ -314,7 +314,7 @@ header .navbar.sticky-header{
 }
 
 .banner-content p{
-	color: #707070;
+	color: #242424;
 	font-size: 20px;
 	font-weight: 300;
 	margin-bottom: 1.5em;
@@ -330,8 +330,8 @@ header .navbar.sticky-header{
 }
 
 .btn-download:hover{
-	border-color: #ff5d56;
-	color: #ff5d56;
+	border-color: #ffbd59;
+	color: #ffbd59;
 }
 
 /**************************************/
