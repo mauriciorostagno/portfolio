@@ -1377,8 +1377,8 @@ header .navbar.sticky-header{
     left: -1px;
     right: -1px;
     bottom: -1px;
-    border-top: 1px solid #ff5d56;
-    border-bottom: 1px solid #ff5d56;
+    border-top: 1px solid #ffbd59;
+    border-bottom: 1px solid #ffbd59;
     transform: scale(0,1);
     transition: all 0.6s;
 }
@@ -1391,8 +1391,8 @@ header .navbar.sticky-header{
     left: -1px;
     right: -1px;
     bottom: -1px;
-    border-left: 1px solid #ff5d56;
-    border-right: 1px solid #ff5d56;
+    border-left: 1px solid #ffbd59;
+    border-right: 1px solid #ffbd59;
     transform: scale(1,0);
     transition: all 0.6s;
 }
@@ -1418,7 +1418,7 @@ header .navbar.sticky-header{
 	width: 40px;
 	margin-left: -20px;
 	height: 3px;
-	background: #ff5d56;
+	background: #ffbd59;
 	position: absolute;
 	left: 50%;
 	bottom: 0;
@@ -1444,14 +1444,14 @@ header .navbar.sticky-header{
 }
 
 .footer-logo h1{
-	font-family: 'Berkshire Swash', cursive;
+	font-family: 'Allerta Stencil', sans-serif;
     font-weight: normal;
     transition: all 0.3s;
     color: #fff;
 }
 
 .footer-logo h1 span{
-	color: #ff5d56;
+	color: #ffbd59;
 }
 
 .footer-about{
@@ -1486,8 +1486,8 @@ header .navbar.sticky-header{
 
 .footer-social a:hover{
 	background: none;
-	border-color: #ff5d56;
-	color: #ff5d56;
+	border-color: #ffbd59;
+	color: #ffbd59;
 }
 
 .footer-copyright{
@@ -1522,7 +1522,7 @@ header .navbar.sticky-header{
 }
 
 .footer-copyright p a:hover{
-	color: #ff5d56;
+	color: #ffbd59;
 }
 
 /*********************************/
