@@ -176,6 +176,7 @@ header .navbar{
 .navbar-brand h1{
 	font-family: 'Allerta Stencil', sans-serif;
 	font-weight: normal;
+	font-size: 42px;
 	transition: all 0.3s;
 	color: #fff;
 	margin: 0;
@@ -358,12 +359,12 @@ header .navbar.sticky-header{
 	position: absolute;
 	bottom: 0;
 	left: 50%;
-	border-bottom: 10px dotted #ff5d56;
+	border-bottom: 10px dotted #ffbd59;
 }
 
 .section-title h2{
-	color: #ff5d56;
-	font-family: 'Berkshire Swash', cursive;
+	color: #ffbd59;
+	font-family: 'Allerta Stencil', sans-serif;
 	font-weight: normal;
 	font-size: 36px;
 }
@@ -409,7 +410,7 @@ header .navbar.sticky-header{
 	display: block;
 	width: 40px;
 	height: 4px;
-	background: #ff5d56;
+	background: #ffbd59;
 	position: absolute;
 	left: 0;
 	bottom: 0;
@@ -446,7 +447,7 @@ header .navbar.sticky-header{
 }
 
 .about-content ul li i{
-	color: #ff5d56;
+	color: #ffbd59;
 	font-size: 20px;
 	position: absolute;
 	top: 0;
