@@ -692,9 +692,9 @@ header .navbar.sticky-header{
 }
 
 .portfolio-nav ul li a.active-portfolio{
-	background: #ff5d56;
+	background: #ffbd59;
 	color: #fff;
-	border-color: #ff5d56;
+	border-color: #ffbd59;
 }
 
 .single-portfolio{
@@ -725,7 +725,7 @@ header .navbar.sticky-header{
 .single-portfolio-overlay h3{
 	font-weight: 400;
 	font-size: 16px;
-	color: #ff5d56;
+	color: #ffbd59;
 	opacity: 0;
 	transition: all 0.8s;
 }
@@ -768,7 +768,7 @@ header .navbar.sticky-header{
 
 .mfp-content .content .desc h5{
 	font-size: 16px;
-	color: #ff5d56;
+	color: #ffbd59;
 	font-weight: 400;
 	margin-bottom: 20px;
 }
@@ -789,8 +789,8 @@ header .navbar.sticky-header{
 }
 
 .btn-view-project:hover{
-	border-color: #ff5d56;
-	color: #ff5d56;
+	border-color: #ffbd59;
+	color: #ffbd59;
 	background: none;
 }
 
@@ -814,8 +814,8 @@ header .navbar.sticky-header{
 }
 
 .load-more-portfolio a:hover{
-	border-color: #ff5d56;
-	color: #ff5d56;
+	border-color: #ffbd59;
+	color: #ffbd59;
 }
 
 /***************************************/
