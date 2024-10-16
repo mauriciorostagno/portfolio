@@ -537,7 +537,7 @@ header .navbar.sticky-header{
 	color: #fff;
 	font-size: 18px;
 	font-weight: 400;
-	background: #ff5d56;
+	background: #ffbd59;
 	padding: 14px 20px;
 	text-transform: uppercase;
 	margin-bottom: 50px;
@@ -568,7 +568,7 @@ header .navbar.sticky-header{
 }
 
 .experience-single h5{
-	color: #ff5d56;
+	color: #ffbd59;
 	font-weight: 400;
 }
 
@@ -602,7 +602,7 @@ header .navbar.sticky-header{
 
 .education-pagination .swiper-pagination-bullet-active,
 .experience-pagination .swiper-pagination-bullet-active{
-	border-color: #ff5d56;
+	border-color: #ffbd59;
 }
 
 .skill-single{
@@ -619,7 +619,7 @@ header .navbar.sticky-header{
 
 .skill-ratting{
 	font-size: 20px;
-	color: #ff5d56;
+	color: #ffbd59;
 }
 
 .counter-single{
@@ -634,7 +634,7 @@ header .navbar.sticky-header{
 
 .counter-single .icon-box{
 	font-size: 50px;
-	color: #ff5d56;
+	color: #ffbd59;
 	line-height: 80px;
 	margin-bottom: 10px;
 	width: 80px;
