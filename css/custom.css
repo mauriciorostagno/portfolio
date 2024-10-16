@@ -81,7 +81,7 @@ a:focus{
     width: 30px;
     height: 30px;
     border-radius: 2px;
-    background: #ff5d56;
+    background: #ffbd59;
     -webkit-transform: translateY(0) rotate(45deg) scale(0);
     transform: translateY(0) rotate(45deg) scale(0);
     -webkit-animation: diamonds 1500ms linear infinite;
