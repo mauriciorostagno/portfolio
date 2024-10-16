@@ -1340,8 +1340,8 @@ header .navbar.sticky-header{
 .btn-contact{
 	background: none;
 	display: inline-block;
-    border: 1px solid #ff5d56;
-    color: #ff5d56;
+    border: 1px solid #ffbd59;
+    color: #ffbd59;
     padding: 12px 30px;
 	cursor: pointer;
 	margin-top: 20px;
@@ -1349,7 +1349,7 @@ header .navbar.sticky-header{
 }
 
 .btn-contact:hover{
-	background: #ff5d56;
+	background: #ffbd59;
 	color: #fff;
 }
 
