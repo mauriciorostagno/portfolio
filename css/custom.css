@@ -209,7 +209,7 @@ header .navbar-collapse.collapse{
 
 .navbar .navbar-nav .nav-link.active{
 	background: none;
-	color: #ff5d56;
+	color: #ffbd59;
 }
 
 .navbar .navbar-nav .nav-link:hover,
@@ -219,7 +219,7 @@ header .navbar-collapse.collapse{
 
 .navbar .navbar-nav .nav-link.active:hover,
 .navbar .navbar-nav .nav-link.active:focus{
-	color: #ff5d56;
+	color: #ffbd59;
 }
 
 header .navbar.sticky-header{
@@ -276,7 +276,7 @@ header .navbar.sticky-header{
 
 .slicknav_nav a:hover{
 	background: none;
-	color: #ff5d56;
+	color: #ffbd59;
 }
 
 /************************************/
