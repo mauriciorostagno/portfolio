@@ -1337,6 +1337,12 @@ header .navbar.sticky-header{
 	color: #fff;
 }
 
+.contact-form .form-control:focus {
+    background: #222; /* Keep the same color when focused/filled */
+    color: #fff; /* Keep text color */
+    border-color: #ffbd59; /* Optional: Change border color on focus for better visibility */
+}
+
 .btn-contact{
 	background: none;
 	display: inline-block;
