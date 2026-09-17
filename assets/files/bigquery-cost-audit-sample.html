@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cost audit — Sample warehouse (synthetic data, not a real client)</title>
+<meta property="og:type" content="article">
+<meta property="og:title" content="BigQuery cost audit - Sample warehouse (synthetic data, not a real client)">
+<meta property="og:description" content="USD 1,923.15 per month in identified savings across 14 findings, read from INFORMATION_SCHEMA metadata alone.">
+<meta property="og:url" content="https://mauriciorostagno.github.io/portfolio/assets/files/bigquery-cost-audit-sample.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://mauriciorostagno.github.io/portfolio/assets/img/og-image.png">
+
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#ffffff; --ink:#16150f; --muted:#6b6a60;
+  --line:#e4e1d6; --accent:#c8901a; --accent-soft:#fdf6e4;
+  --high:#a8341f; --medium:#9a6b12; --low:#5c6b4a; --info:#4a5a6b;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#141310; --surface:#1c1b17; --ink:#f0eee6; --muted:#9a988c;
+    --line:#2e2c25; --accent:#e0aa3c; --accent-soft:#2a2318;
+    --high:#e0765c; --medium:#d9a83e; --low:#9dbd82; --info:#8fa8c0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141310; --surface:#1c1b17; --ink:#f0eee6; --muted:#9a988c;
+  --line:#2e2c25; --accent:#e0aa3c; --accent-soft:#2a2318;
+  --high:#e0765c; --medium:#d9a83e; --low:#9dbd82; --info:#8fa8c0;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);margin:0;
+  font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1.5rem 5rem}
+header{border-bottom:2px solid var(--ink);padding-bottom:1.25rem;margin-bottom:2.5rem}
+h1{font-size:1.6rem;line-height:1.25;margin:0 0 .4rem;letter-spacing:-.015em}
+.sub{color:var(--muted);font-size:.9rem;margin:0}
+.sub code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em}
+
+.headline{background:var(--surface);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:.4rem;
+  padding:1.75rem;margin-bottom:1rem}
+.headline .amount{font-size:2.9rem;font-weight:650;letter-spacing:-.03em;
+  line-height:1;margin:0 0 .35rem;font-variant-numeric:tabular-nums}
+.headline .per{font-size:1rem;font-weight:400;color:var(--muted)}
+.headline .annual{color:var(--muted);font-size:.9rem;margin:0}
+.caveat{font-size:.85rem;color:var(--muted);margin:0 0 3rem;padding-left:.2rem}
+.warn{background:var(--surface);border:1px solid var(--high);border-left:4px solid var(--high);
+  border-radius:.4rem;padding:1.1rem 1.3rem;margin:0 0 1rem}
+.warn h3{margin:0 0 .4rem;font-size:.92rem;color:var(--high)}
+.warn p{margin:0 0 .5rem;font-size:.86rem}
+.warn p:last-child{margin:0}
+.warn .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;
+  color:var(--muted)}
+
+h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);font-weight:600;margin:3rem 0 1rem;
+  padding-bottom:.5rem;border-bottom:1px solid var(--line)}
+
+.finding{background:var(--surface);border:1px solid var(--line);
+  border-radius:.4rem;padding:1.25rem 1.4rem;margin-bottom:.85rem}
+.finding.high{border-left:3px solid var(--high)}
+.finding.medium{border-left:3px solid var(--medium)}
+.finding.low{border-left:3px solid var(--low)}
+.finding.informational{border-left:3px solid var(--info)}
+.fhead{display:flex;justify-content:space-between;align-items:baseline;
+  gap:1rem;flex-wrap:wrap}
+.ftitle{font-weight:600;font-size:1.02rem;margin:0}
+.fid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;
+  color:var(--accent);background:var(--accent-soft);padding:.1rem .4rem;
+  border-radius:.2rem;margin-right:.5rem;font-weight:600}
+.famount{font-weight:650;font-size:1.15rem;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.famount.none{font-size:.8rem;font-weight:500;color:var(--muted)}
+.target{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;
+  color:var(--muted);margin:.35rem 0 .8rem;word-break:break-all}
+.rec{margin:0 0 .9rem}
+.conf{font-size:.76rem;color:var(--muted);margin:0 0 .9rem}
+.conf b{color:var(--ink);font-weight:600}
+
+details{border-top:1px solid var(--line);padding-top:.7rem}
+summary{cursor:pointer;font-size:.8rem;color:var(--muted);
+  list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";color:var(--accent)}
+details[open] summary::before{content:"▾ "}
+table{width:100%;border-collapse:collapse;margin-top:.7rem;font-size:.82rem}
+td{padding:.3rem .6rem .3rem 0;vertical-align:top;border-bottom:1px solid var(--line)}
+td:first-child{color:var(--muted);white-space:nowrap;width:1%;padding-right:1.2rem}
+td:last-child{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.95em;word-break:break-word}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:.3rem;
+  padding:.8rem;overflow-x:auto;font-size:.78rem;line-height:1.5;margin:.7rem 0 0;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--line);
+  font-size:.82rem;color:var(--muted)}
+footer p{margin:0 0 .6rem}
+.empty{color:var(--muted);font-style:italic}
+@media print{
+  body{background:#fff}
+  .finding{break-inside:avoid;border:1px solid #ddd}
+  details{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>BigQuery cost audit</h1>
+  <p class="sub"><code>Sample warehouse (synthetic data, not a real client)</code> · 30-day window ·
+     2026-09-17 · on-demand, US multi-region, list price</p>
+</header>
+
+<div class="headline">
+  <p class="amount">USD 1,923.15<span class="per"> / month</span></p>
+  <p class="annual">USD 23,078 per year ·
+     5 of 14 findings priced</p>
+</div>
+<p class="caveat">
+  This total counts only findings proven or measured from metadata. Estimates
+  and context findings are listed separately below and add nothing to it.
+</p>
+
+<h2>High impact — 2 findings</h2>
+<article class="finding high">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">C2</span>Dataset would be cheaper on the other storage billing model</p>
+    <span class="famount">USD 810.95<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse</p>
+  <p class="rec">Switch the dataset to physical storage billing. One setting, no change to data, queries or pipelines.</p>
+  <p class="conf"><b>certain</b> — Proven by metadata alone</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>current_model</td><td>logical</td></tr><tr><td>logical_cost_usd</td><td>USD 1,460.98</td></tr><tr><td>physical_cost_usd</td><td>USD 650.03</td></tr><tr><td>time_travel_bytes_included</td><td>193273528320.0</td></tr><tr><td>compression_ratio</td><td>4.55</td></tr><tr><td>pricing_model</td><td>on-demand, US multi-region, list price</td></tr></table>
+    <pre>ALTER SCHEMA `demo.warehouse` SET OPTIONS (storage_billing_model = &#x27;PHYSICAL&#x27;);</pre>
+  </details>
+</article>
+<article class="finding high">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">B1</span>Large table with no partitioning</p>
+    <span class="famount">USD 750.00<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse.events_raw</p>
+  <p class="rec">Partition this table by `event_ts` and enable require_partition_filter.</p>
+  <p class="conf"><b>likely</b> — Measured, with one stated assumption</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>table_bytes</td><td>40.00 TiB</td></tr><tr><td>bytes_billed_in_window</td><td>439804651110400.0</td></tr><tr><td>lookback_days</td><td>30</td></tr><tr><td>monthly_scan_cost_usd</td><td>USD 2,500.00</td></tr><tr><td>pruning_assumption</td><td>0.3</td></tr><tr><td>partition_column_candidate</td><td>event_ts</td></tr><tr><td>clustered_on</td><td>—</td></tr><tr><td>pricing_model</td><td>on-demand, US multi-region, list price</td></tr></table>
+    <pre>-- Rebuild partitioned. Verify row counts before swapping.
+CREATE OR REPLACE TABLE `demo.warehouse.events_raw_partitioned`
+PARTITION BY DATE(`event_ts`)
+OPTIONS (require_partition_filter = TRUE) AS
+SELECT * FROM `demo.warehouse.events_raw`;</pre>
+  </details>
+</article><h2>Medium impact — 1 finding</h2>
+<article class="finding medium">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">A2</span>Recurring query scans a partitioned table in full</p>
+    <span class="famount">USD 356.25<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse.orders</p>
+  <p class="rec">This query never mentions `order_date`, so it reads every partition. Add a filter on it, then set require_partition_filter = TRUE so the mistake cannot recur.</p>
+  <p class="conf"><b>likely</b> — Measured, with one stated assumption</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>normalized_query_hash</td><td>h-full-orders</td></tr><tr><td>occurrences</td><td>3</td></tr><tr><td>partition_column</td><td>order_date</td></tr><tr><td>bytes_billed_in_window</td><td>65970697666560.0</td></tr><tr><td>table_bytes</td><td>20.00 TiB</td></tr><tr><td>prune_factor</td><td>0.05</td></tr><tr><td>prune_factor_source</td><td>observed</td></tr><tr><td>lookback_days</td><td>30</td></tr><tr><td>require_partition_filter</td><td>no</td></tr><tr><td>sample_query</td><td>SELECT customer_id, SUM(total) FROM `demo.warehouse.orders` GROUP BY 1</td></tr><tr><td>pricing_model</td><td>on-demand, US multi-region, list price</td></tr></table>
+    <pre>ALTER TABLE `demo.warehouse.orders` SET OPTIONS (require_partition_filter = TRUE);</pre>
+  </details>
+</article><h2>Low impact — 2 findings</h2>
+<article class="finding low">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">C1</span>Table pays storage but no query reads it</p>
+    <span class="famount">USD 4.00<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse.archive_2019</p>
+  <p class="rec">Confirm with the owner, then either drop the table or export it to Cloud Storage Archive, which costs a fraction of warehouse storage.</p>
+  <p class="conf"><b>likely</b> — Measured, with one stated assumption</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>table_bytes</td><td>200.00 GiB</td></tr><tr><td>active_logical_bytes</td><td>200.00 GiB</td></tr><tr><td>long_term_logical_bytes</td><td>0 B</td></tr><tr><td>lookback_days</td><td>30</td></tr><tr><td>last_modified</td><td>2026-08-01T10:00:00Z</td></tr><tr><td>caveat</td><td>Metadata cannot see retention obligations or disaster recovery copies. Confirm with the data owner.</td></tr></table>
+    <pre>-- After confirming:
+DROP TABLE `demo.warehouse.archive_2019`;</pre>
+  </details>
+</article>
+<article class="finding low">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">A3</span>Identical query re-run without hitting cache</p>
+    <span class="famount">USD 1.95<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse.dim_product</p>
+  <p class="rec">Materialise this result into a table refreshed on the source&#x27;s schedule, or route the callers through one service account so they share a cache entry.</p>
+  <p class="conf"><b>certain</b> — Proven by metadata alone</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>normalized_query_hash</td><td>h-dim</td></tr><tr><td>runs</td><td>5</td></tr><tr><td>redundant_runs</td><td>4</td></tr><tr><td>basis</td><td>no source table changed during the window</td></tr><tr><td>avg_bytes_billed</td><td>85899345920.0</td></tr><tr><td>referenced_tables</td><td>demo.warehouse.dim_product</td></tr><tr><td>distinct_users</td><td>bi@demo.iam</td></tr><tr><td>lookback_days</td><td>30</td></tr><tr><td>pricing_model</td><td>on-demand, US multi-region, list price</td></tr></table>
+    
+  </details>
+</article><h2>Not counted in the total — 9 findings</h2>
+<article class="finding medium">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">A2</span>Recurring query scans a partitioned table in full</p>
+    <span class="famount">USD 93.75<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse.sessions</p>
+  <p class="rec">This query never mentions `session_date`, so it reads every partition. Add a filter on it, then set require_partition_filter = TRUE so the mistake cannot recur.</p>
+  <p class="conf"><b>heuristic</b> — Estimate - excluded from the total</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>normalized_query_hash</td><td>h-full-sessions</td></tr><tr><td>occurrences</td><td>2</td></tr><tr><td>partition_column</td><td>session_date</td></tr><tr><td>bytes_billed_in_window</td><td>21990232555520.0</td></tr><tr><td>table_bytes</td><td>10.00 TiB</td></tr><tr><td>prune_factor</td><td>0.25</td></tr><tr><td>prune_factor_source</td><td>default</td></tr><tr><td>lookback_days</td><td>30</td></tr><tr><td>require_partition_filter</td><td>no</td></tr><tr><td>sample_query</td><td>SELECT * FROM `demo.warehouse.sessions`</td></tr><tr><td>pricing_model</td><td>on-demand, US multi-region, list price</td></tr></table>
+    <pre>ALTER TABLE `demo.warehouse.sessions` SET OPTIONS (require_partition_filter = TRUE);</pre>
+  </details>
+</article>
+<article class="finding medium">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">B1</span>Large table with no partitioning</p>
+    <span class="famount">USD 75.00<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse.planet_features</p>
+  <p class="rec">Clustered on geometry with no date column to partition by. Clustering may already be the right design here - verify before acting.</p>
+  <p class="conf"><b>heuristic</b> — Estimate - excluded from the total</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>table_bytes</td><td>5.00 TiB</td></tr><tr><td>bytes_billed_in_window</td><td>43980465111040.0</td></tr><tr><td>lookback_days</td><td>30</td></tr><tr><td>monthly_scan_cost_usd</td><td>USD 250.00</td></tr><tr><td>pruning_assumption</td><td>0.3</td></tr><tr><td>partition_column_candidate</td><td>—</td></tr><tr><td>clustered_on</td><td>geometry</td></tr><tr><td>pricing_model</td><td>on-demand, US multi-region, list price</td></tr></table>
+    
+  </details>
+</article>
+<article class="finding low">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">A3</span>Identical query re-run without hitting cache</p>
+    <span class="famount">USD 1.17<span class="per">/mo</span></span>
+  </div>
+  <p class="target">demo.warehouse.fact_sales</p>
+  <p class="rec">Materialise this result into a table refreshed on the source&#x27;s schedule, or route the callers through one service account so they share a cache entry.</p>
+  <p class="conf"><b>heuristic</b> — Estimate - excluded from the total</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>normalized_query_hash</td><td>h-sales</td></tr><tr><td>runs</td><td>4</td></tr><tr><td>redundant_runs</td><td>3</td></tr><tr><td>basis</td><td>source data changed; assumed one legitimate run per day</td></tr><tr><td>avg_bytes_billed</td><td>68719476736.0</td></tr><tr><td>referenced_tables</td><td>demo.warehouse.fact_sales</td></tr><tr><td>distinct_users</td><td>dash@demo.iam</td></tr><tr><td>lookback_days</td><td>30</td></tr><tr><td>pricing_model</td><td>on-demand, US multi-region, list price</td></tr></table>
+    
+  </details>
+</article>
+<article class="finding informational">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">A8</span>Spend concentrated in a single principal</p>
+    <span class="famount none">no saving attributed</span>
+  </div>
+  <p class="target">etl@demo.iam</p>
+  <p class="rec">Start here when prioritising every other finding in this report. Optimising a principal that drives 2% of spend cannot move the bill.</p>
+  <p class="conf"><b>certain</b> — Proven by metadata alone</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>share_of_spend</td><td>0.7653</td></tr><tr><td>bytes_billed_in_window</td><td>439804651110400.0</td></tr><tr><td>monthly_spend_usd</td><td>USD 2,500.00</td></tr><tr><td>note</td><td>Spend, not waste. Excluded from the savings total.</td></tr></table>
+    
+  </details>
+</article>
+<article class="finding informational">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">A8</span>Spend concentrated in a single principal</p>
+    <span class="famount none">no saving attributed</span>
+  </div>
+  <p class="target">dash@demo.iam</p>
+  <p class="rec">Start here when prioritising every other finding in this report. Optimising a principal that drives 2% of spend cannot move the bill.</p>
+  <p class="conf"><b>certain</b> — Proven by metadata alone</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>share_of_spend</td><td>0.1153</td></tr><tr><td>bytes_billed_in_window</td><td>66245575573504.0</td></tr><tr><td>monthly_spend_usd</td><td>USD 376.56</td></tr><tr><td>note</td><td>Spend, not waste. Excluded from the savings total.</td></tr></table>
+    
+  </details>
+</article>
+<article class="finding low">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">B1</span>Large table with no partitioning</p>
+    <span class="famount none">no saving attributed</span>
+  </div>
+  <p class="target">demo.warehouse.archive_2019</p>
+  <p class="rec">Partitioning would not pay off while the table is unused. Check detection C1 first - this table may not need to exist.</p>
+  <p class="conf"><b>heuristic</b> — Estimate - excluded from the total</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>table_bytes</td><td>200.00 GiB</td></tr><tr><td>bytes_billed_in_window</td><td>0</td></tr><tr><td>clustered_on</td><td>—</td></tr><tr><td>note</td><td>No queries hit this table in the lookback window.</td></tr></table>
+    
+  </details>
+</article>
+<article class="finding high">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">B4</span>Partitioned table does not require a partition filter</p>
+    <span class="famount none">no saving attributed</span>
+  </div>
+  <p class="target">demo.warehouse.orders</p>
+  <p class="rec">One ALTER statement. No rebuild, no downtime. After it, a query with no partition filter fails instead of billing. 1 query in the observed window would start failing - fix those first, then enable the flag.</p>
+  <p class="conf"><b>certain</b> — Proven by metadata alone</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>table_bytes</td><td>20.00 TiB</td></tr><tr><td>partition_column</td><td>order_date</td></tr><tr><td>cost_of_one_full_scan_usd</td><td>USD 125.00</td></tr><tr><td>queries_that_would_start_failing</td><td>1</td></tr><tr><td>sample_affected_query</td><td>SELECT customer_id, SUM(total) FROM `demo.warehouse.orders` GROUP BY 1</td></tr><tr><td>note</td><td>No saving is attributed here. Detection A2 prices the full scans that already happened; counting them again would inflate the total.</td></tr></table>
+    <pre>ALTER TABLE `demo.warehouse.orders` SET OPTIONS (require_partition_filter = TRUE);</pre>
+  </details>
+</article>
+<article class="finding high">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">B4</span>Partitioned table does not require a partition filter</p>
+    <span class="famount none">no saving attributed</span>
+  </div>
+  <p class="target">demo.warehouse.sessions</p>
+  <p class="rec">One ALTER statement. No rebuild, no downtime. After it, a query with no partition filter fails instead of billing. 1 query in the observed window would start failing - fix those first, then enable the flag.</p>
+  <p class="conf"><b>certain</b> — Proven by metadata alone</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>table_bytes</td><td>10.00 TiB</td></tr><tr><td>partition_column</td><td>session_date</td></tr><tr><td>cost_of_one_full_scan_usd</td><td>USD 62.50</td></tr><tr><td>queries_that_would_start_failing</td><td>1</td></tr><tr><td>sample_affected_query</td><td>SELECT * FROM `demo.warehouse.sessions`</td></tr><tr><td>note</td><td>No saving is attributed here. Detection A2 prices the full scans that already happened; counting them again would inflate the total.</td></tr></table>
+    <pre>ALTER TABLE `demo.warehouse.sessions` SET OPTIONS (require_partition_filter = TRUE);</pre>
+  </details>
+</article>
+<article class="finding informational">
+  <div class="fhead">
+    <p class="ftitle"><span class="fid">E4</span>Query spend carries no cost-attribution labels</p>
+    <span class="famount none">no saving attributed</span>
+  </div>
+  <p class="target">(whole project)</p>
+  <p class="rec">Set job labels in the clients that submit queries - dbt, Airflow and the BI tools all support it. Then cost per pipeline becomes a query instead of a guess.</p>
+  <p class="conf"><b>certain</b> — Proven by metadata alone</p>
+  <details>
+    <summary>Evidence</summary>
+    <table><tr><td>unlabelled_share</td><td>1.0</td></tr><tr><td>unlabelled_jobs</td><td>34</td></tr><tr><td>total_jobs</td><td>34</td></tr><tr><td>unattributed_monthly_spend_usd</td><td>USD 3,266.50</td></tr><tr><td>note</td><td>Saves nothing directly. Makes every other finding measurable.</td></tr></table>
+    
+  </details>
+</article>
+
+<footer>
+  <p><b>Method.</b> Read-only metadata from <code>INFORMATION_SCHEMA</code>. No
+     table data was accessed at any point, and no query touched a row of the
+     warehouse's contents.</p>
+  <p><b>Prices.</b> on-demand, US multi-region, list price: USD 6.25 per
+     TiB scanned, USD 0.020 per GiB-month
+     of active logical storage. A different region or a capacity commitment
+     changes every figure here proportionally.</p>
+  <p><b>Confidence.</b> <i>certain</i> is provable from metadata alone;
+     <i>likely</i> is measured with one stated assumption, named in the evidence;
+     <i>heuristic</i> could not be measured and is excluded from the total.</p>
+</footer>
+</div>
+</body>
+</html>

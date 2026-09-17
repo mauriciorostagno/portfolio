@@ -357,14 +357,16 @@
             <div class="featured-body">
               <span class="project-tag project-tag--dev">In development</span>
               <h3>BigQuery Cost Auditor</h3>
-              <p>A tool that audits a BigQuery project and flags where it is wasting money, starting with tables that are missing partitioning and clustering.</p>
+              <p>A tool that audits a BigQuery project and reports where it is wasting money, with an estimated monthly saving for each finding. Eight detectors across query spend, table design and storage.</p>
               <ul class="project-points">
-                <li>It reads only INFORMATION_SCHEMA metadata. It never touches the data itself.</li>
-                <li>It builds on the approach I used to cut query costs by 15% at Jobint.</li>
+                <li>It reads INFORMATION_SCHEMA only, never the data itself. A full audit bills a few cents and needs read-only access.</li>
+                <li>Running it against a live warehouse broke one of my own detectors. BigQuery bills only the columns a query reads, so a query scanning every partition can still bill 2% of the table. The check I had written could never fire.</li>
+                <li>A finding carries a dollar figure only when the metadata proves it. Estimates are listed separately and never add to the headline number.</li>
               </ul>
-              <ul class="project-stack"><li>Python</li><li>BigQuery</li><li>INFORMATION_SCHEMA</li></ul>
+              <ul class="project-stack"><li>Python</li><li>BigQuery</li><li>INFORMATION_SCHEMA</li><li>pandas</li><li>pytest</li></ul>
               <div class="project-links">
                 <span class="project-private">Private repo</span>
+                <a href="assets/files/bigquery-cost-audit-sample.html" target="_blank" rel="noopener">Sample report</a>
                 <a href="mailto:mrostagno8@gmail.com?subject=BigQuery%20Cost%20Auditor%20demo">Demo available on request</a>
               </div>
             </div>
