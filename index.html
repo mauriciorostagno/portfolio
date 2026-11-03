@@ -326,6 +326,27 @@
         </div>
 
         <div class="featured-list">
+          <article class="featured-project featured-project--wide">
+            <a class="featured-media" href="https://github.com/mauriciorostagno/budget-variance-pipeline" target="_blank" rel="noopener">
+              <img src="assets/img/projects/budget-variance-dag.png" alt="Airflow graph view of the budget_variance_pipeline DAG with every task in success" loading="lazy">
+            </a>
+            <div class="featured-body">
+              <span class="project-tag">Data Engineering</span>
+              <h3>Budget Variance Pipeline</h3>
+              <p>Budget against actual spend by cost center, expense category and month, over 6,550 invoices and 61M USD in three currencies. An LLM classifies the invoices that arrive from the ERP with no expense category.</p>
+              <ul class="project-points">
+                <li>Uncategorized spend went from 15.4% to 0%, at 95% accuracy measured against a labelled set of 6,550 invoices. Every row records whether its category came from the source system or from the model.</li>
+                <li>The agent hit its daily token limit halfway through a run, at 488 of 962 invoices. Nothing was lost. It only asks for invoices with no prediction for the current prompt version, so the next run picked up where it stopped.</li>
+                <li>The marts rebuild even when the agent fails. It enriches the data and the report does not depend on it, so a failed run leaves invoices uncategorized instead of holding the numbers back.</li>
+              </ul>
+              <ul class="project-stack"><li>dbt</li><li>Airflow</li><li>PostgreSQL</li><li>Python</li><li>Docker</li><li>Groq</li><li>GitHub Actions</li></ul>
+              <div class="project-links">
+                <a href="https://github.com/mauriciorostagno/budget-variance-pipeline" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://mauriciorostagno.github.io/budget-variance-pipeline/pipeline.html" target="_blank" rel="noopener">Walkthrough</a>
+              </div>
+            </div>
+          </article>
+
           <article class="featured-project">
             <a class="featured-media" href="https://github.com/mauriciorostagno/citibike-lakehouse" target="_blank" rel="noopener">
               <img src="assets/img/projects/citibike-architecture.svg" alt="CitiBike Lakehouse architecture diagram: GBFS feeds to bronze, silver and gold layers in Databricks" loading="lazy">
